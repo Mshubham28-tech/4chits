@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>4chits — Raja Mantri Chor Sipahi, Online</title>
+<meta name="description" content="The classic paper-chit bluffing game you grew up with — Raja Mantri Chor Sipahi — now online with live voice, avatars, and global leaderboards. Join the alpha." />
+<meta name="theme-color" content="#6b3fa0" />
+
+<meta property="og:title" content="4chits — Raja Mantri Chor Sipahi, Online" />
+<meta property="og:description" content="The classic Indian bluffing game, reimagined online. Join the secret alpha." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.4chits.com/" />
+<meta property="og:image" content="https://www.4chits.com/assets/og-image.png" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="4chits — Raja Mantri Chor Sipahi, Online" />
+<meta name="twitter:description" content="The classic Indian bluffing game, reimagined online. Join the secret alpha." />
+<meta name="twitter:image" content="https://www.4chits.com/assets/og-image.png" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236b3fa0'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='sans-serif'%3E4%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="#main" class="logo">4<span>chits</span></a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#how-it-works">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#join-alpha" class="nav-cta">Join alpha</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">Back-benchers since &apos;89</p>
+        <h1>Raja. Mantri. Chor. Sipahi.<br />Now online.</h1>
+        <p class="lede">
+          The paper-chit bluffing game that ruled every bus ride, train journey, and boring lecture — rebuilt for your phone.
+          Same roles, same points, same thrill of bluffing your way out of being the Chor.
+        </p>
+        <div class="hero-actions">
+          <a href="#join-alpha" class="btn btn-primary">Join the secret alpha</a>
+          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+        </div>
+      </div>
+
+      <div class="hero-demo" aria-label="Chit unfolding demo">
+        <div class="chit-stack" id="chitStack">
+          <button class="chit" type="button" data-role="Raja" data-points="1000">?</button>
+          <button class="chit" type="button" data-role="Mantri" data-points="800">?</button>
+          <button class="chit" type="button" data-role="Sipahi" data-points="500">?</button>
+          <button class="chit" type="button" data-role="Chor" data-points="0">?</button>
+        </div>
+        <button class="btn btn-shuffle" id="shuffleBtn" type="button">
+          <span aria-hidden="true">🔀</span> Shuffle
+        </button>
+        <p class="demo-hint">Tap a chit to unfold it. Tap Shuffle to reset.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="section how-it-works">
+    <div class="wrap">
+      <h2>One guess decides everything</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-num">1</span>
+          <h3>Four roles, four fates</h3>
+          <p>Every round, the chits are dealt: Raja, Mantri, Sipahi, and Chor. Only you know who you are.</p>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <h3>The Mantri investigates</h3>
+          <p>The Mantri gets one guess to point out the Chor — using nothing but conversation, tells, and nerve.</p>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <h3>Points are won or lost</h3>
+          <p>Guess right, and the Mantri keeps all 800 points. Guess wrong, and the Chor walks away with them instead.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="features" class="section features">
+    <div class="wrap">
+      <h2>Everything that made it great. Plus everything online needed.</h2>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Fixed roles, fixed points</h3>
+          <p>Raja (1000), Mantri (800), Sipahi (500), Chor (0) — the exact scoring you grew up with, untouched.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3>Face-time bluffing</h3>
+          <p>Live audio and video, plus expressive avatars, so the bluffing is as real as it was across the bus seat.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3>Global streaks</h3>
+          <p>Leaderboards and win streaks against players worldwide — see how your bluffing holds up globally.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3>Quick-match or private rooms</h3>
+          <p>Jump into an instant match with players online, or create a private room for your own friend circle.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="join-alpha" class="section cta">
+    <div class="wrap cta-inner">
+      <h2>Be first to play.</h2>
+      <p>We're letting a small group in early. Drop your email and we'll send you a seat in the alpha the moment it opens.</p>
+
+      <form id="alphaForm" class="signup-form" novalidate>
+        <label class="sr-only" for="alphaEmail">Email address</label>
+        <input
+          id="alphaEmail"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        />
+        <button type="submit" class="btn btn-primary">Join alpha</button>
+      </form>
+      <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+      <p class="privacy-note">We only use this to send alpha access and launch updates. Unsubscribe anytime.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; <span id="year"></span> 4chits. Made with nostalgia.</p>
+    <div class="footer-links">
+      <a href="https://x.com/4chitsgame" target="_blank" rel="noopener">X</a>
+      <a href="https://instagram.com/4chitsgame" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://discord.gg/4chits" target="_blank" rel="noopener">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
