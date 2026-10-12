@@ -40,7 +40,7 @@ shuffleBtn.addEventListener("click", resetChits);
 // endpoint once you've created one at https://formspree.io (free tier works fine).
 // Until then, submissions will show a friendly "coming soon" message instead
 // of silently failing.
-const FORM_ENDPOINT = "https://formspree.io/f/REPLACE_ME";
+const FORM_ENDPOINT = "https://formspree.io/f/moejnywd";
 
 const alphaForm = document.getElementById("alphaForm");
 const formStatus = document.getElementById("formStatus");
