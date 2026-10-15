@@ -24,14 +24,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Prints the folder layout so a future failure is easy to diagnose from
-      # the Actions log alone, without needing repo access outside GitHub.
-      - name: Show repo layout (for troubleshooting)
+      # Finds the game frontend's package.json wherever it actually landed
+      # (uploads via GitHub's web UI have accidentally nested it one extra
+      # level before, e.g. game/game/frontend instead of game/frontend) and
+      # records its folder so every later step uses the real path instead of
+      # a hardcoded guess.
+      - name: Locate game frontend folder
         run: |
-          echo "--- top level ---"
-          ls -la
-          echo "--- game/frontend ---"
-          ls -la game/frontend || echo "game/frontend not found"
+          MATCH=$(find . -path "*/game/frontend/package.json" -not -path "*/node_modules/*" | head -1)
+          if [ -z "$MATCH" ]; then
+            echo "Could not find a game/.../frontend/package.json anywhere in the repo."
+            echo "--- full repo layout ---"
+            find . -not -path "./.git/*" -not -path "*/node_modules/*"
+            exit 1
+          fi
+          FRONTEND_DIR=$(dirname "$MATCH")
+          echo "Found frontend at: $FRONTEND_DIR"
+          echo "FRONTEND_DIR=$FRONTEND_DIR" >> "$GITHUB_ENV"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -40,11 +49,11 @@ jobs:
 
       - name: Install game frontend dependencies
         run: npm ci
-        working-directory: game/frontend
+        working-directory: ${{ env.FRONTEND_DIR }}
 
       - name: Build game frontend
         run: npm run build
-        working-directory: game/frontend
+        working-directory: ${{ env.FRONTEND_DIR }}
 
       # Combine the static landing page (served at the domain root) with the
       # built game app (served at /play/, per DECISIONS.md "Build Phase 1
@@ -55,7 +64,7 @@ jobs:
           mkdir -p site
           cp -r landing/. site/
           mkdir -p site/play
-          cp -r game/frontend/dist/. site/play/
+          cp -r "${FRONTEND_DIR}/dist/." site/play/
 
       - name: Upload combined site as Pages artifact
         uses: actions/upload-pages-artifact@v3
