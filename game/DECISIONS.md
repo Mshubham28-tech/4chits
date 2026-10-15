@@ -131,6 +131,19 @@ _Status: decided — 2026-10-12_
 
 ---
 
+## Build Phase 1 kickoff — corrections before coding
+
+_Status: decided — 2026-10-15_
+
+**Correction to Round 4 (Rooms/joining):** `play.4chits.com` is not possible from the same repo as the landing page — GitHub Pages allows only one custom domain per repository. [Confirmed via GitHub community discussion.](https://github.com/orgs/community/discussions/164202)
+
+| Question | Options considered | Decision | Why |
+|---|---|---|---|
+| Subdomain fix | Separate repo for play.4chits.com / switch to 4chits.com/play path / move to Vercel/Netlify | **Switch to `4chits.com/play` (path-based)** — reverses the Round 4 URL decision | User's choice — stays in one repo/one service rather than adding a second repo or a new hosting provider. |
+| Testing method | Live deployed link, no installs / also set up local Node.js+editor | **Live link only** — every phase ends with a real URL to open in the browser | Matches the user's no-terminal, no-local-setup situation; identical pattern to how the landing page was tested. |
+
+**Consequence:** the GitHub Actions workflow must build the game frontend and merge it with the landing page into one combined Pages deployment, with the game served under `/play/`. The Vite build needs `base: '/play/'` configured so its assets resolve correctly at that path. Phase 1 code is still handed over as source files (not a pre-built app) — GitHub Actions does `npm install`/`npm run build` automatically on every push, so no Node.js install is ever needed on the user's computer.
+
 ## Phase 0 Summary (all 8 rounds complete)
 
 **Audience:** general/mixed audience, all ages/family-friendly, India-first but not blocked elsewhere, English+Hinglish voice.
@@ -152,3 +165,43 @@ _Status: decided — 2026-10-12_
 **Two things flagged and resolved during this phase, not silently decided:** the viral-traffic-vs-budget risk (Round 6), and the "Play now" link needing to wait for the budget safety gate (Round 7).
 
 **Say "start building" to move into build phases**, or raise anything above you want to revisit first.
+
+## Phase 1 build log — app shell and theme (complete, awaiting test confirmation)
+
+Built the actual Vite + React + TypeScript app at `game/frontend/`, following the Phase 0 decisions above.
+
+**What's in this phase:**
+- App shell with the "4chits" header, served at `4chits.com/play` (Vite `base: '/play/'`, React Router `basename="/play"`).
+- `theme.css` ports the landing page's exact CSS custom properties (same purple/gold palette, same fonts) — no new colors invented, per the Round 5 "same palette throughout" decision.
+- Five placeholder screens, routed but not yet wired to a real server:
+  - `/` — enter a display name (saved for the browser tab only, via `sessionStorage`), then choose Create or Join.
+  - `/create` — pick rounds per match (5/10/20, per Round 2), generates a fake local room code.
+  - `/join` — type a room code (any code is accepted for now).
+  - `/lobby/:roomCode` — shows the room code, a "copy invite link" button, and a player list containing just you.
+  - `/game/:roomCode` — placeholder "game arrives in Phase 3" screen, confirms routing works end-to-end.
+- Nothing here talks to a real server yet. No other players can actually join. That's intentional — Phase 2 adds the real multiplayer server and room syncing.
+
+**Build verified:** `npm run build` inside `game/frontend` compiles cleanly (TypeScript + Vite, no errors).
+
+**Infrastructure change:** `.github/workflows/deploy-pages.yml` now builds `game/frontend` on every push (via `npm ci && npm run build`) and combines its output with `landing/` into one deployed site — landing page at the domain root, game app under `/play/`. This replaces the earlier version of the workflow that only deployed `landing/`.
+
+**Still outstanding before this phase is "done":** the user needs to upload these new/changed files to GitHub and confirm the Actions run succeeds, then test `4chits.com/play` live in at least two different browsers (per BUILD_PROMPT.md's end-of-phase rule) before Phase 2 (real server/rooms/lobby) begins.
+
+**Phase 1 confirmed working (user-tested, live at `4chits.com/play`).** Hit two real deploy issues along the way, both fixed in the workflow rather than by hand-editing the repo:
+- `actions/setup-node`'s dependency cache pointed at `game/frontend/package-lock.json` and failed with "paths were not resolved" — removed the cache step (it's a speed optimization, not required).
+- A GitHub web-UI upload nested the frontend one level deeper than intended (`game/game/frontend` instead of `game/frontend`). Rather than require delicate manual folder surgery, the workflow now searches the repo for `game/.../frontend/package.json` at build time and uses whatever path it actually finds — resilient to this kind of upload mistake happening again. The stray duplicate `game/game` folder is still sitting in the repo (harmless, cosmetic) and can be cleaned up later via GitHub's web code editor.
+
+**Phase 1 is complete.** Moving to Phase 2: the real multiplayer server (rooms, lobby sync, reconnect handling) per BUILD_PROMPT.md's phase structure.
+
+## Phase 2 kickoff — rooms/lobby/server decisions
+
+| Question | Options considered | Decision | Why |
+|---|---|---|---|
+| Host leaves lobby before starting | Room closes immediately / host role transfers to another player | **Room closes immediately** — everyone else is returned to the home screen with a message | Simplest to build correctly; matches a no-accounts casual game. Host-transfer can be revisited later if it's actually missed. |
+| Refresh/brief disconnect in lobby or game | Reconnect to the same seat (uses the Phase 0 60s grace period) / always treated as a new join | **Reconnect, same seat** | Consistent with the Round 4 Phase 0 decision; avoids a refresh bumping someone from a full room or duplicating them. |
+| Empty room cleanup | 5 minutes / 30 minutes | **5 minutes** | Keeps the free-tier server's memory tidy; nobody realistically returns to an empty room after that. |
+| Render cold-start wait (up to ~1 min) | Simple themed message + spinner / skip for now | **Simple themed message + spinner now**, e.g. "Waking up the game table… this can take up to a minute." Phase 5 can make it fancier. | Functional and on-brand now without blocking Phase 2 on visual polish. |
+
+**Consequence:** the server needs per-player reconnect tokens (not just a display name) so a refresh can be matched back to the same seat, and a periodic cleanup sweep for empty rooms. The frontend needs a "connecting to server" state that shows the cold-start message whenever the socket isn't connected yet, not just on first load.
+
+**What Phase 2 builds:** a Node.js + Socket.IO server (`game/server/`), deployed to Render's free tier (per Phase 0's tech-stack decision), that actually creates rooms with real codes, syncs the lobby's player list live between browsers, and starts the match for everyone at once once 4/4 players are present. Full card-dealing gameplay is still Phase 3 — Phase 2 only makes the lobby real.
