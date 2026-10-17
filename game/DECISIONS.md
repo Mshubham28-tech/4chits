@@ -205,3 +205,13 @@ Built the actual Vite + React + TypeScript app at `game/frontend/`, following th
 **Consequence:** the server needs per-player reconnect tokens (not just a display name) so a refresh can be matched back to the same seat, and a periodic cleanup sweep for empty rooms. The frontend needs a "connecting to server" state that shows the cold-start message whenever the socket isn't connected yet, not just on first load.
 
 **What Phase 2 builds:** a Node.js + Socket.IO server (`game/server/`), deployed to Render's free tier (per Phase 0's tech-stack decision), that actually creates rooms with real codes, syncs the lobby's player list live between browsers, and starts the match for everyone at once once 4/4 players are present. Full card-dealing gameplay is still Phase 3 — Phase 2 only makes the lobby real.
+
+## Bug found and fixed — stale-copy deploy from the duplicate folder
+
+While wiring up the real Render server URL, discovered the Phase 1 web-UI upload nesting bug (noted earlier as "harmless, cosmetic") was **not actually harmless**. The real scaffold (`App.tsx`, `main.tsx`, `theme.css`, `vite.config.ts`, etc.) had landed at `game/game/frontend/`, not `game/frontend/`. The Phase 2 zip then added its new files (socket client, updated pages) to the *correct* `game/frontend/` path — which left two incomplete, out-of-sync copies: `game/frontend/` (Phase 2 files, missing the Phase 1 scaffold, wouldn't even build) and `game/game/frontend/` (full Phase 1 scaffold, but the old pre-networking pages). The deploy workflow's "find the frontend folder" step picked whichever one `find` happened to list first — non-deterministic, and silently wrong.
+
+**Fix:** merged the real scaffold files from `game/game/frontend/` into `game/frontend/` (keeping the Phase 2 versions of the pages and the new lib files), verified the merged result builds and passes the same Playwright multiplayer test as before, and hardened the workflow's folder-finder to deterministically pick the **shortest path** match instead of just the first one `find` returns — so even if a duplicate nested folder reappears, the correct top-level copy always wins, and every candidate found is now printed in the Actions log for visibility.
+
+**Still recommended (not blocking):** delete the leftover `game/game/` folder from the repo via GitHub's web code editor (press `.` on the repo page) next time there's a spare few minutes, now that nothing depends on it.
+
+**Also set this phase:** `game/frontend/src/lib/socket.ts`'s `SERVER_URL` now points at the real deployed Render service: `https://fourchits.onrender.com`.

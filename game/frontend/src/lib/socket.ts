@@ -4,7 +4,7 @@ import { io, type Socket } from 'socket.io-client'
 // web service is first created. Can be overridden at build time via the
 // VITE_SERVER_URL env var (used for local testing); otherwise falls back to
 // the constant below, which gets updated once the real Render URL is known.
-export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? 'https://REPLACE_WITH_RENDER_URL.onrender.com'
+export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? 'https://fourchits.onrender.com'
 
 // Render's free tier sleeps the server after idling and can take up to ~1
 // minute to wake back up (DECISIONS.md Phase 2 kickoff). These options make
